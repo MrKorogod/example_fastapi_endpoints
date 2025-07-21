@@ -1,28 +1,28 @@
+from typing import List
+from loguru import logger
+
+from example_app.core.base_loader import BaseModelLoader
+from example_app.core.protector import AppTransport
+from example_app.example_modules.some_module.dto import SomeFilterDto, SomeResponseDto
+from example_app.example_modules.some_module.error_code import ExampleErrorCode
+from example_app.example_modules.some_module.some_db_model import SomeDBModel
+from example_app.helpers.custom_error import ExampleCustomError
 
 
-
-
-
-
-
-class SomeLoader:
-
-    @classmethod
-    async def get_all(cls, filter_params: SomeFilterParams, transport: AppTransport) -> List[SomeResponseDto]:
-        return [SomeResponseDto(id=1, name="test"), SomeResponseDto(id=2, name="test2")]
-
-    @classmethod
-    async def get(cls, organization_id:int, transport: AppTransport) -> SomeResponseDto:
-        return SomeResponseDto(id=organization_id, name="test")
+class SomeLoader(BaseModelLoader):
+    model = SomeDBModel
 
     @classmethod
-    async def create(cls, in_dto: SomeDto.Create, transport: AppTransport) -> SomeResponseDto:
-        return SomeResponseDto(id=1, name=in_dto.name)
+    async def get(cls, filter_dto: SomeFilterDto, transport: AppTransport) -> SomeResponseDto | List[SomeResponseDto]:
 
-    @classmethod
-    async def update(cls, organization_id:int, in_dto: SomeDto.Update, transport: AppTransport)-> SomeResponseDto:
-        return SomeResponseDto(id=organization_id, name=in_dto.name)
+        try:
+            logger.debug(f"FilterDto: {filter_dto}")
+            logger.debug(f"Transport: {transport}")
+        except Exception as e:
+            raise ExampleCustomError(status_code=500,
+                                     app_error_code = ExampleErrorCode.some_error,
+                                     message=f"Failed in load config. Exeption = {e}")
 
-    @classmethod
-    async def transfer_to_archive(cls, organization_id:int, transport: AppTransport)-> SomeResponseDto:
-        return SomeResponseDto(id=organization_id, name="test")
+        return await BaseModelLoader.get(filter_dto, transport)
+
+

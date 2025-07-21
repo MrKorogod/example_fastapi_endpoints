@@ -1,9 +1,11 @@
 from typing import List
 from fastapi import APIRouter, Depends
 
-from example_app.example_modules.some_module.dto import SomeResponseDto
+from example_app.core.protector import AppTransport, protector
+from example_app.example_modules.some_module.dto import SomeResponseDto, SomeFilterDto, SomeRequestDto
+from example_app.example_modules.some_module.loader import SomeLoader
 
-version_router = APIRouter(
+some_router = APIRouter(
     prefix="/example",
     tags=["example"],
     responses={
@@ -14,24 +16,25 @@ version_router = APIRouter(
     }
 )
 
-@version_router.get("/", summary="Retrieve all versions",
-                    description="Возвращает версии По в зависимости от параметров фильтрации",
-                    response_model=List[SomeResponseDto])
+@some_router.get("/", summary="Возвращает объекты БД",
+                    description="Возвращает объекты БД в зависимости от параметров фильтрации",
+                    response_model=SomeResponseDto | List[SomeResponseDto])
 async def get_versions(transport: AppTransport = Depends(protector), filter_dto: SomeFilterDto = Depends()):
-    return await VersionLoader.get(filter_dto = filter_dto, transport=transport)
+    return await SomeLoader.get(filter_dto = filter_dto, transport=transport)
 
-@version_router.post("/", summary="Add version for software",
+
+@some_router.post("/", summary="Add version for software",
                      description="Создает новую запись версии для программного обеспечения в базе данных с предоставленным идентификатором программного обеспечения, версией и пути файла",
-                     response_model=VersionResponseDto)
-async def add_version(in_dto: VersionRequestDto.CreateVersion,
+                     response_model=SomeResponseDto)
+async def add_version(in_dto: SomeRequestDto.SomeCreateDto,
                           transport: AppTransport = Depends(protector)):
-    return await VersionLoader.create(in_dto=in_dto, transport=transport)
+    return await SomeLoader.create(in_dto=in_dto, transport=transport)
 
 
-@version_router.delete("/{version_id}", summary="Delete version",
+@some_router.delete("/{version_id}", summary="Delete version",
                        description="Remove a version entry from the database by its unique version ID",
                        response_model=VersionResponseDto)
 async def delete_version(version_id: int,
                          transport: AppTransport = Depends(protector)):
-    return await VersionLoader.delete(model_id=version_id, transport=transport)
+    return await SomeLoader.delete(model_id=version_id, transport=transport)
 

@@ -5,6 +5,7 @@ from loguru import logger
 
 from example_app.core.dto.example_core_dto import CoreDto
 from example_app.helpers.custom_error import ExampleCustomError
+from example_app.helpers.directory_path import config_dir
 from example_app.helpers.path_helper import resource_path
 
 
@@ -35,4 +36,4 @@ def set_config(config_dir: str = None) -> CoreDto:
     return conf
 
 
-# app_config = set_config(config_dir=None)
+app_config = set_config(config_dir=config_dir)
