@@ -35,5 +35,4 @@ def set_config(config_dir: str = None) -> CoreDto:
             f.write(conf_for_write)
     return conf
 
-
 app_config = set_config(config_dir=config_dir)

@@ -14,6 +14,13 @@ class SomeLoader(BaseModelLoader):
 
     @classmethod
     async def get(cls, filter_dto: SomeFilterDto, transport: AppTransport) -> SomeResponseDto | List[SomeResponseDto]:
+        if not (db_session := transport.db_session):
+            raise ExampleCustomError(status_code=500,
+                                     app_error_code=ExampleErrorCode.some_error,
+                                     message="Some error message")
+
+        logger.debug(f"db_session={db_session}")
+
 
         try:
             logger.debug(f"FilterDto: {filter_dto}")
@@ -21,7 +28,7 @@ class SomeLoader(BaseModelLoader):
         except Exception as e:
             raise ExampleCustomError(status_code=500,
                                      app_error_code = ExampleErrorCode.some_error,
-                                     message=f"Failed in load config. Exeption = {e}")
+                                     message=f"Some error message. Exeption = {e}")
 
         return await BaseModelLoader.get(filter_dto, transport)
 

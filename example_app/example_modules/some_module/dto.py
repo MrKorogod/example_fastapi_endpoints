@@ -2,6 +2,10 @@ from pydantic import BaseModel, Field
 
 from example_app.core.dto.base_filter_dto import BaseFilterDto
 
+# ======================================================================================================================
+
+class SomeFilterDto(BaseFilterDto):
+    example_f_key_field_id: int | None = Field(None, description="Значение ID связанной с данной моделью модели")
 
 # ======================================================================================================================
 
@@ -13,12 +17,6 @@ class SomeResponseDto(BaseModel):
     example_f_key_field_id: int | None = Field(default=None, description="Возвращаемое значение ID связанной с данной моделью модели")
 
 # ======================================================================================================================
-
-class SomeFilterDto(BaseFilterDto):
-    example_f_key_field_id: int | None = Field(None, description="Значение ID связанной с данной моделью модели")
-
-# ======================================================================================================================
-
 
 class SomeRequestDto:
     class SomeCreateDto(BaseModel):

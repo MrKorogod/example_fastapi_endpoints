@@ -2,8 +2,9 @@ from loguru import logger
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy import text
 
-from app.core.core_dto import DataBaseConfigDto
-from app.data_base.app_declarative_base import metadata
+from example_app.core.data_base.app_declarative_base import metadata
+from example_app.core.dto.example_core_dto import DataBaseConfigDto
+from example_app.helpers.set_config_helper import app_config
 
 
 class Database:
@@ -58,7 +59,7 @@ class Database:
     async def get_session(cls) -> AsyncSession:
         if cls._session_factory is None:
             db_config: DataBaseConfigDto
-            await cls.initialize(config.data_base_config)
+            await cls.initialize(app_config.data_base_config)
 
         return cls._session_factory()
 
@@ -75,7 +76,6 @@ class Database:
 
 
 async def get_db_session():
-    """Dependency для получения сессии базы данных"""
     session = await Database.get_session()
     try:
         yield session
